@@ -1,3 +1,5 @@
+// Copyright [2019] [colonelwatch]
+
 #include "fix_fft.h"                  // 8-bit FFT library modified for Arduino
 #include "ssd1306.h"                  // library for OLED
 #include "nano_engine.h"              // library for nanoengine (which draws sector-by-sector on OLED because the ATtiny85 can't hold a full buffer)
