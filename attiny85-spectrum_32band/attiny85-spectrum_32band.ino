@@ -34,13 +34,13 @@ void loop()
   for (int i = 0; i < 64; i++) {
     microseconds = micros();
     
-    data[i] = (analogRead(A3)) >> 2 - 127;                          // Fitting analogRead data (range:0 - 1024) to int8_t array (range:-127 - 127)
+    data[i] = (analogRead(A3)) >> 2 - 128;                          // Fitting analogRead data (range:0 - 1023) to int8_t array (range:-128 - 127)
     summ += data[i];
-    while (micros() < (microseconds + sampling_period_us)) {      // Timing out uC to fulfill sampling frequency requirement
+    while (micros() < (microseconds + sampling_period_us)) {        // Timing out uC ADC to fulfill sampling frequency requirement
     }
   }
 
-  // Eliminating remaining DC component (produces usable data in FHT bin #0, which is usually swamped by DC bias)
+  // Eliminating remaining DC component (produces usable data in FFT bin #0, which is usually swamped by DC bias)
   avg = summ/64;
   for (int i = 0; i < 64; i++){
     data[i] -= avg;
@@ -48,12 +48,12 @@ void loop()
     
   fix_fftr(data, 6, 0);                             // Performing real FFT
 
-  // Time smoothing by a factor of 0.375 on rise and 0.5 on fall and scaling by factor of 2
+  // Time smoothing by a factor of 0.5 on rise and 0.625 on fall and scaling by factor of 2
   for(int count = 0; count < 32; count++){
   if(data[count] <= 0) data[count] = 0;
   else data[count] *= 2;
-  if (data[count] < buff[count]) data[count] = (buff[count] * 5 + (data[count] * 3) >> 3);
-  else data[count] = (buff[count] * 4 + (data[count] * 4) >> 3);
+  if (data[count] < buff[count]) data[count] = (buff[count] * 4 + (data[count] * 4) >> 3);
+  else data[count] = (buff[count] * 5 + (data[count] * 3) >> 3);
   buff[count] = data[count];
   }
 
