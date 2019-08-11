@@ -36,7 +36,7 @@ The core of the program is a loop of this:
 
 ## Schematic
 
-![Schematic](images/schematic.png)
+![Schematic](data/schematic.png)
 
 ## Demonstration
 
