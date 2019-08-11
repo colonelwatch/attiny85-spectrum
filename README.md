@@ -44,7 +44,7 @@ The core of the program is a loop of this:
 
 ### Enclosure
 
-The STL of the enclosure in the video is included in this repo. Printed on a Monoprice Select Mini V2. See [this](images/Inside.jpg) picture for component placements on a 3x7 protoboard.
+The STL of the enclosure in the video is included in this repo. Printed on a Monoprice Select Mini V2. See [this](images/Inside.jpg) picture for component placements on a 3x7 protoboard. *Note: The barrel connector wire colors were accidentally swapped⁠—red is ground, and black is 5V⁠. Please correct this if you intend to replicate the entire project!*
 
 ## Limitations/TO-DO
 
