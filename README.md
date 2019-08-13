@@ -15,7 +15,7 @@ I had to change the pin assignments in the ssd1306 library to free up an analog-
 The core of the program is a loop of this:
 
 1. The music is sampled with the ADC at pin 3/A3, which is then mapped to the range that int8_t covers (0 to 1023 -> -128 to 127)
-     * A prescaler of 16 gives a sampling frequency of about 2MHz (considering the overclock), so empty while loops are used to maintain the user-set sampling frequency
+     * A prescaler of ~~16~~ 32 gives a sampling frequency of about ~~2MHz~~ *now 1MHz* (considering the overclock), so empty while loops are used to maintain the user-set sampling frequency
 2. The average value is subtracted from all samples. This lets the first band represent extremely low frequencies, rather than being swamped with the DC bias
 3. The "fix_fftr" function, which runs twice as fast as and uses half the memory of the "fix_fft" version because it doesn't need imaginary data
 4. The output is cut off below 0, scaled up, and time-smoothed using the previous output and fixed factors
