@@ -2,7 +2,7 @@
 
 ![Main Image](images/Main.jpg)
 
-The goal of this project is to get smooth, appealing music visualization on the ATTiny85, optimizing around its limited speed and resources (RAM and program memory). Its on ongoing personal project right now which ~~I mean to add to later~~ is mostly complete (outside help is still welcome!), but it's otherwise fully functional and ready to be flashed. Some special steps are required, however, and will be listed below. *Thanks goes to redditors stockvu and mashuptwice for their input on time-smoothing.*
+The goal of this project is to get smooth, appealing music visualization on the ATTiny85, optimizing around its limited speed and resources (RAM and program memory). Its on ongoing personal project right now which is mostly complete (outside help is still welcome!), but it's otherwise fully functional and ready to be flashed. Some special steps are required, however, and will be listed below. *Thanks goes to redditors stockvu and mashuptwice for their input on time-smoothing.*
 
 ## Explanation
 The linchpins to enabling music visualization with an ATTiny85 are two libraries: 
