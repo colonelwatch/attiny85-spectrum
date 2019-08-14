@@ -48,7 +48,7 @@ The STL of the enclosure in the video is included in this repo. Printed on a Mon
 
 ## Limitations/TO-DO
 
-- The fix_fft library uses linear scaling for both frequency and power... and without much resolution in either / *No room for logarithmic scaling? TO-DO: Attempt to implement later.*
+- The fix_fft library uses linear scaling for both frequency and power... and without much resolution in either / ~~*No room for logarithmic scaling? TO-DO: Attempt to implement later.*~~
 - The OLED display regularly shows detached bars that only really appear in still photos / *TO-DO: Find out why*
     - Apparently has reduced intensity now with recent code changes. Still unexplained though.
 

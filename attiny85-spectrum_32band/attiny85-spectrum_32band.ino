@@ -9,11 +9,15 @@
 // Make sure to undo this if the library will be used again in the future
 
 // These are user-adjustable
+//#define LOG_OUTPUT              // Uncomment to enable logarithmic output (exchanges absolute resoluton for more readable output; may require different below params)
 #define SAMPLING_FREQUENCY 15000  // Sampling frequency (Actual max measured frequency captured is half)
 #define TIME_FACTOR 3             // Smoothing factor (lower is more dynamic, higher is smoother) ranging from 1 to 10+
-#define SCALE_FACTOR 12            // Direct scaling factor (raise for higher bars, lower for shorter bars)
+#define SCALE_FACTOR 12           // Direct scaling factor (raise for higher bars, lower for shorter bars)
 
-const float coeff = 1./TIME_FACTOR; // Time smoothing coefficients (used to factor in previous data)
+#ifdef LOG_OUTPUT
+const float log_scale = 64./log(64./SCALE_FACTOR + 1.);                              // Attempts to create an equivalent to SCALE_FACTOR for log function
+#endif
+const float coeff = 1./TIME_FACTOR;                                                  // Time smoothing coefficients (used to factor in previous data)
 const float anti_coeff = (TIME_FACTOR-1.)/TIME_FACTOR;
 const unsigned int sampling_period_us = round(1000000 * (2.0 / SAMPLING_FREQUENCY)); // Sampling period (doubled to account for overclock)
 
@@ -59,8 +63,12 @@ void loop()
   
   // Time smoothing by user-determined factor and user-determined scaling
   for(int count = 0; count < 32; count++){
-  if(data[count] <= 0) data[count] = 0;                                         // Eliminating negative output of fix_fftr
-  else data[count] *= SCALE_FACTOR;                                             // Scaling up according to SCALE_FACTOR
+  if(data[count] < 0) data[count] = 0;                                          // Eliminating negative output of fix_fftr
+  #ifdef LOG_OUTPUT
+  else data[count] = log_scale*log((float)(data[count]+1));                     // Logarithmic function equivalent to SCALING_FACTOR*log2(x+1)
+  #else
+  else data[count] *= SCALE_FACTOR;                                             // Linear scaling up according to SCALE_FACTOR
+  #endif
   data[count] = (float)buff[count] * anti_coeff + (float)data[count] * coeff;   // Smoothing by factoring in past data
   buff[count] = data[count];                                                    // Storing current output as next frame's past data
   if(data[count] > 63) data[count] = 63;                                        // Capping output at screen height
