@@ -10,8 +10,8 @@
 
 // These are user-adjustable
 #define SAMPLING_FREQUENCY 15000  // Sampling frequency (Actual max measured frequency captured is half)
-#define TIME_FACTOR 2             // Smoothing factor (lower is more dynamic, higher is smoother) ranging from 1 to 10+
-#define SCALE_FACTOR 2.5          // Direct scaling factor (raise for higher bars, lower for shorter bars)
+#define TIME_FACTOR 3             // Smoothing factor (lower is more dynamic, higher is smoother) ranging from 1 to 10+
+#define SCALE_FACTOR 8          // Direct scaling factor (raise for higher bars, lower for shorter bars)
 
 const float coeff = 1./TIME_FACTOR; // Time smoothing coefficients (used to factor in previous data)
 const float anti_coeff = (TIME_FACTOR-1.)/TIME_FACTOR;
