@@ -43,7 +43,7 @@ void loop()
   for (int i = 0; i < 64; i++) {
     microseconds = micros();
     
-    data[i] = (analogRead(A3)) >> 2 - 128;                          // Fitting analogRead data (range:0 - 1023) to int8_t array (range:-128 - 127)
+    data[i] = ((analogRead(A3)) >> 2) - 128;                        // Fitting analogRead data (range:0 - 1023) to int8_t array (range:-128 - 127)
     summ += data[i];
     while (micros() < (microseconds + sampling_period_us)) {        // Timing out uC ADC to fulfill sampling frequency requirement
     }
