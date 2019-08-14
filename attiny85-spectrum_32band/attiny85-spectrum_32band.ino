@@ -10,8 +10,8 @@
 
 // These are user-adjustable
 #define SAMPLING_FREQUENCY 15000  // Sampling frequency (Actual max measured frequency captured is half)
-#define TIME_FACTOR 2             // Smoothing factor (lower is more dynamic, higher is smoother) ranging from 1 to 10+
-#define SCALE_FACTOR 2.5          // Direct scaling factor (raise for higher bars, lower for shorter bars)
+#define TIME_FACTOR 3             // Smoothing factor (lower is more dynamic, higher is smoother) ranging from 1 to 10+
+#define SCALE_FACTOR 12            // Direct scaling factor (raise for higher bars, lower for shorter bars)
 
 const float coeff = 1./TIME_FACTOR; // Time smoothing coefficients (used to factor in previous data)
 const float anti_coeff = (TIME_FACTOR-1.)/TIME_FACTOR;
@@ -43,7 +43,7 @@ void loop()
   for (int i = 0; i < 64; i++) {
     microseconds = micros();
     
-    data[i] = (analogRead(A3)) >> 2 - 128;                          // Fitting analogRead data (range:0 - 1023) to int8_t array (range:-128 - 127)
+    data[i] = ((analogRead(A3)) >> 2) - 128;                        // Fitting analogRead data (range:0 - 1023) to int8_t array (range:-128 - 127)
     summ += data[i];
     while (micros() < (microseconds + sampling_period_us)) {        // Timing out uC ADC to fulfill sampling frequency requirement
     }
@@ -57,15 +57,14 @@ void loop()
     
   fix_fftr(data, 6, 0);                             // Performing real FFT
   
-  // Time smoothing by user-determined factor and scaling by factor of 2
+  // Time smoothing by user-determined factor and user-determined scaling
   for(int count = 0; count < 32; count++){
-  if(data[count] <= 0) data[count] = 0;
-  else data[count] *= SCALE_FACTOR;
-  data[count] = (float)buff[count] * anti_coeff + (float)data[count] * coeff;
-  buff[count] = data[count];
+  if(data[count] <= 0) data[count] = 0;                                         // Eliminating negative output of fix_fftr
+  else data[count] *= SCALE_FACTOR;                                             // Scaling up according to SCALE_FACTOR
+  data[count] = (float)buff[count] * anti_coeff + (float)data[count] * coeff;   // Smoothing by factoring in past data
+  buff[count] = data[count];                                                    // Storing current output as next frame's past data
+  if(data[count] > 63) data[count] = 63;                                        // Capping output at screen height
   }
-
-  data[0] /= 2;
   
   // Output to SSD1306 using nanoengine canvas from library
   engine.refresh();                                               // Mark entire screen to be refreshed
@@ -76,7 +75,7 @@ void loop()
   engine.canvas.blt(0,32);                                        // Outputs canvas to OLED with an offset (x pixels, y pixels)
   engine.canvas.clear();
   for(int i = 0; i < 8; i++){
-    if(abs(data[i]) > 31) engine.canvas.drawVLine(i*4,31-(data[i]-31),31);     // Draw to canvas data for upper-leftest sector (FFT bins 0 - 7, upper half)
+    if(data[i] > 31) engine.canvas.drawVLine(i*4,31-(data[i]-31),31);     // Draw to canvas data for upper-leftest sector (FFT bins 0 - 7, upper half)
   }
   engine.canvas.blt(0,0);
   engine.canvas.clear();
@@ -86,7 +85,7 @@ void loop()
   engine.canvas.blt(32,32);  
   engine.canvas.clear();
   for(int i = 8; i < 16; i++){
-    if(abs(data[i]) > 31) engine.canvas.drawVLine((i-8)*4,31-(data[i]-31),31);   // FFT bins 9 - 15, upper half
+    if(data[i] > 31) engine.canvas.drawVLine((i-8)*4,31-(data[i]-31),31);   // FFT bins 9 - 15, upper half
   }
   engine.canvas.blt(32,0);
   engine.canvas.clear();
@@ -96,7 +95,7 @@ void loop()
   engine.canvas.blt(64,32);
   engine.canvas.clear();
   for(int i = 16; i < 24; i++){
-    if(abs(data[i]) > 31) engine.canvas.drawVLine((i-16)*4,31-(data[i]-31),31);  // FFT bins 16 - 23, upper half 
+    if(data[i] > 31) engine.canvas.drawVLine((i-16)*4,31-(data[i]-31),31);  // FFT bins 16 - 23, upper half 
   }
   engine.canvas.blt(64,0);
   engine.canvas.clear();
@@ -106,7 +105,7 @@ void loop()
   engine.canvas.blt(96,32);
   engine.canvas.clear();
   for(int i = 24; i < 32; i++){
-    if(abs(data[i]) > 31) engine.canvas.drawVLine((i-24)*4,31-(data[i]-31),31);  // FFT bins 24 - 31, upper half
+    if(data[i] > 31) engine.canvas.drawVLine((i-24)*4,31-(data[i]-31),31);  // FFT bins 24 - 31, upper half
   }
   engine.canvas.blt(96,0);
 }
