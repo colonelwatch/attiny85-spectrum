@@ -40,7 +40,7 @@ The core of the program is a loop of this:
 
 ## Demonstration
 
-[![attiny85-spectrum demonstration](http://img.youtube.com/vi/P0hhlpMXIjA/0.jpg)](http://www.youtube.com/watch?v=P0hhlpMXIjA)
+[![attiny85-spectrum demonstration](http://img.youtube.com/vi/iyPTCbWjp_4/0.jpg)](https://www.youtube.com/watch?v=iyPTCbWjp_4)
 
 ### Enclosure
 
