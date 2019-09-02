@@ -10,7 +10,7 @@ The linchpins to enabling music visualization with an ATTiny85 are two libraries
 - kosme's AVR implementation of [fix_fft](https://github.com/kosme/fix_fft), a faster 8-bit integer-based FFT
 - lexus2k's [ssd1306](https://github.com/lexus2k/ssd1306) library and its nanoengine API, which outputs to the OLED in 32x32 chunks because the ATTiny85 can't hold the entire screen in memory
 
-I had to change the pin assignments in the ssd1306 library to free up an analog-capable pin, ~~and in the fix_fft library I changed the char type buffers into int8_t ones~~. Both modified libraries are availible, and they must be placed in the Arduino libraries folder, overwriting the original ones (keep a backup!). *Recently kosme has updated the fix_fft library to int8_t defintions as well, __I have now included his latest commit instead__.* Additionally, I raised the OSCCAL value to 240, giving me an internal clock of about 30MHz. It's usually used for clock calibration, but it has been used successfully for overclocking. However, it's only found on the ATTiny85 and a few other Atmel MCUs.
+I had to change the pin assignments in the ssd1306 library to free up an analog-capable pin, ~~and in the fix_fft library I changed the char type buffers into int8_t ones~~. Both modified libraries are availible, and they must be placed in the Arduino libraries folder, overwriting the original ones (keep a backup!). *Recently kosme has updated the fix_fft library to int8_t defintions as well, __I have now included his latest commit instead__.* Additionally, I raised the OSCCAL value to 250, giving me an internal clock of about 30MHz. It's usually used for clock calibration, but it has been used successfully for overclocking. However, it's only found on the ATTiny85 and a few other Atmel MCUs.
 
 The core of the program is a loop of this:
 
@@ -18,7 +18,7 @@ The core of the program is a loop of this:
      * A prescaler of ~~16~~ 32 gives a sampling frequency of about ~~2MHz~~ *now 1MHz* (considering the overclock), so empty while loops are used to maintain the user-set sampling frequency
 2. The average value is subtracted from all samples. This lets the first band represent extremely low frequencies, rather than being swamped with the DC bias
 3. The "fix_fftr" function, which runs twice as fast as and uses half the memory of the "fix_fft" version because it doesn't need imaginary data
-4. The output is cut off below 0, scaled up, and time-smoothed using the previous output and fixed factors
+4. The output is reordered, cut off below 0, scaled up, and time-smoothed using the previous output and fixed factors
 5. The modified output is fed into the OLED part-by-part using the nanoengine API
 
 ## Components

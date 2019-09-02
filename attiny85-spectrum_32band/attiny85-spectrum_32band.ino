@@ -12,7 +12,7 @@
 //#define LOG_OUTPUT              // Uncomment to enable logarithmic output (exchanges absolute resoluton for more readable output; may require different below params)
 #define SAMPLING_FREQUENCY 15000  // Sampling frequency (Actual max measured frequency captured is half)
 #define TIME_FACTOR 3             // Smoothing factor (lower is more dynamic, higher is smoother) ranging from 1 to 10+
-#define SCALE_FACTOR 12           // Direct scaling factor (raise for higher bars, lower for shorter bars)
+#define SCALE_FACTOR 8           // Direct scaling factor (raise for higher bars, lower for shorter bars)
 
 #ifdef LOG_OUTPUT
 const float log_scale = 64./log(64./SCALE_FACTOR + 1.);                              // Attempts to create an equivalent to SCALE_FACTOR for log function
@@ -29,7 +29,7 @@ NanoEngine<TILE_32x32_MONO> engine;                            // declares nanoe
 
 void setup()
 {
-  OSCCAL = 240; // Overclocks the MCU to around 30 MHz, set lower if this causes instability, raise if you can/want
+  OSCCAL = 250; // Overclocks the MCU to around 30 MHz, set lower if this causes instability, raise if you can/want
   
   ADCSRA &= ~(bit (ADPS0) | bit (ADPS1) | bit (ADPS2));       // clear ADC prescaler bits
   ADCSRA |= bit (ADPS2);                                      // sets ADC clock in excess of 10kHz
@@ -60,6 +60,14 @@ void loop()
   }
     
   fix_fftr(data, 6, 0);                             // Performing real FFT
+
+  // Reordering the data so that the left/right halves become odd/even, based on apparent fix_fftr output
+  // Seems to make it more accurate (proper response to a frequency sweep with some aliasing)
+  {int8_t reordered[32];  // <-- This array as a global variable causes instablity, so it's declared in a minimal scope
+    for(int i = 0; i < 32; i++){
+    if(i % 2 != 0) reordered[i] = data[i/2+16];
+    else reordered[i] = data[i/2];
+  }for(int i = 0; i < 32; i++) data[i] = reordered[i];}
   
   // Time smoothing by user-determined factor and user-determined scaling
   for(int count = 0; count < 32; count++){
